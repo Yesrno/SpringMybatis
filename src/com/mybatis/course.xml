@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper 
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.courseDao">
+
+	<resultMap type="com.po.Course" id="allcourse">
+		<id property="id" column="id"/>
+		<result property="title" column="title"/>
+		<result property="credits" column="credits"/>
+		<collection property="student" ofType="com.po.Student">
+			<id property="id" column="id"/>
+			<result property="name" column="name"/>
+			<result property="grade" column="grade"/>
+		</collection> 
+		<collection property="selects" ofType="com.po.Select_course">
+			<id property="id" column="id"/>
+			<result property="times" column="times"/>
+		</collection> 
+	</resultMap>
+	<select id="selectCourseByid" parameterType="Integer" resultMap="allcourse">
+		select r.id,r.title,r.credits,s.id,s.name,s.grade,l.id,l.times 
+		from student s,course r,select_course l 
+		where s.id=l.studentid and r.id=l.courseid and r.id = #{id}
+	</select> 
+	
+	<select id="selectAllCourse" resultMap="allcourse">
+		select r.id,r.title,r.credits,s.id,s.name,s.grade,l.id,l.times 
+		from student s,course r,select_course l 
+		where s.id=l.studentid and r.id=l.courseid
+	</select> 
+	<insert id="addCourse" parameterType="com.po.Course">
+		insert into course(title,credits) value (#{title},#{credits})
+	</insert> 
+	<update id="updateCourse" parameterType="com.po.Course">
+		update course set title=#{title},credits=#{credits} where id=#{id}
+	</update> 
+	
+	<delete id="deleteUser" parameterType="Integer"> 
+		delete from select_course where studentid=#{id}
+		delete from course where id=#{id}
+	</delete> 
+</mapper>
